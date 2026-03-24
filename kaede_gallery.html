@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赤松枫 - 绝望的协奏曲</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            color: #fff;
+            /* 🟢 修改点：背景路径 */
+            background: url('../images/bg11.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        :root {
+            --theme-music: #e066ff; 
+            --theme-dark: #2a0033;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(40, 0, 40, 0.4); 
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gallery-left {
+            width: 45%;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            border-right: 4px double var(--theme-music);
+        }
+
+        .character-img {
+            height: 90%;
+            width: auto;
+            filter: drop-shadow(0 0 15px rgba(224, 102, 255, 0.6));
+            transform: translateX(-50px); 
+            opacity: 0;
+            animation: slideInLeft 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards 0.3s;
+        }
+
+        .character-img:hover { transform: scale(1.03); }
+
+        .deco-text {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+            font-family: serif;
+            font-style: italic;
+            pointer-events: none;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px; left: 30px;
+            padding: 10px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--theme-music);
+            color: var(--theme-music);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: var(--theme-music);
+            color: #fff;
+            box-shadow: 0 0 20px var(--theme-music);
+        }
+
+        .gallery-right {
+            width: 55%;
+            padding: 50px;
+            overflow-y: auto;
+            background: rgba(20, 0, 20, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid var(--theme-music);
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-header h1 {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 2px 2px 0 var(--theme-music);
+            animation: pianoKey 1s ease-in-out infinite alternate;
+        }
+
+        .gallery-header span {
+            color: var(--theme-music);
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            height: 180px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            transition: 0.3s;
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.6s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.7s; }
+
+        .gallery-item:hover {
+            border-color: var(--theme-music);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(224, 102, 255, 0.4);
+            z-index: 10;
+        }
+
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: 0.5s; opacity: 0.8;
+        }
+
+        .gallery-item:hover img { transform: scale(1.1); opacity: 1; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a001a; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-music); border-radius: 4px; }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pianoKey {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+
+        #particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            animation: floatMusic 7s ease-in-out infinite;
+            color: rgba(255, 255, 255, 0.6);
+            text-shadow: 0 0 10px var(--theme-music);
+        }
+        @keyframes floatMusic {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0.8); opacity: 0; }
+            20% { opacity: 0.8; }
+            50% { transform: translateY(50vh) rotate(20deg) scale(1.2); } 
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) rotate(-10deg) scale(1); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div id="particles"></div>
+
+    <div class="main-layout">
+        <div class="gallery-left">
+            <a href="index.html#kaede" class="back-btn">DA CAPO</a>
+            <img src="../images/img017.jpg" alt="赤松枫" class="character-img">
+            
+            <div class="deco-text">PIANIST</div>
+        </div>
+
+        <div class="gallery-right">
+            <div class="gallery-header">
+                <h1>CONCERTO</h1> <span>AKAMATSU KAEDE</span>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="../images/img040.jpg" alt="CG1"></div>
+                <div class="gallery-item"><img src="../images/img041.jpg" alt="CG2"></div>
+                <div class="gallery-item"><img src="../images/img042.jpg" alt="CG3"></div>
+                <div class="gallery-item"><img src="../images/img043.jpg" alt="CG4"></div>
+            </div>
+
+            <div style="margin-top: 40px; border-top: 1px solid #666; padding-top: 20px; color: #aaa; font-style: italic;">
+                <p>♪ 正在播放：Der Flohwalzer (跳蚤圆舞曲)</p>
+                <p>“无论发生什么，都要相信大家...”</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const particlesContainer = document.getElementById('particles');
+        const symbols = ['🎵', '🎶', '🎼', '🎹', '𝄞', '𝄢']; 
+
+        function createParticle() {
+            const span = document.createElement('span');
+            span.classList.add('particle');
+            span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            
+            span.style.left = Math.random() * 100 + 'vw';
+            span.style.fontSize = (Math.random() * 25 + 20) + 'px';
+            span.style.animationDuration = (Math.random() * 3 + 6) + 's';
+            
+            particlesContainer.appendChild(span);
+            setTimeout(() => { span.remove(); }, 10000);
+        }
+        setInterval(createParticle, 600);
+    </script>
+</body>
+</html>

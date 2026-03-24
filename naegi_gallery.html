@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苗木诚 - 专属影像档案</title>
+    <style>
+        /* ================= 全局设定 ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            color: #fff;
+            
+            /* 🟢 修改点：背景路径 */
+            background: url('../images/bg06.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        :root {
+            --dangan-pink: #ff00cc;
+            --dangan-blue: #00ffff;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.3); 
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ================= 左侧：人物展示区 ================= */
+        .gallery-left {
+            width: 40%;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .character-img {
+            height: 90%;
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateX(-50px); 
+            opacity: 0;
+            animation: slideInLeft 0.8s forwards 0.3s;
+        }
+
+        .character-img:hover {
+            transform: scale(1.03) !important;
+        }
+
+        .deco-text {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+            font-style: italic;
+            pointer-events: none;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px; left: 30px;
+            padding: 10px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--dangan-pink);
+            color: var(--dangan-pink);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+
+        .back-btn:hover {
+            background: var(--dangan-pink);
+            color: #fff;
+            box-shadow: 0 0 20px var(--dangan-pink);
+        }
+
+        /* ================= 右侧：画廊滚动区 ================= */
+        .gallery-right {
+            width: 60%;
+            padding: 50px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            border-left: 3px solid var(--dangan-blue);
+        }
+
+        .gallery-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            font-style: italic;
+            background: linear-gradient(120deg, #fff 30%, #00ff00 50%, #fff 70%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shineHope 3s linear infinite;
+        }
+
+        .gallery-header span {
+            color: var(--dangan-blue);
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            animation: breath 2s infinite alternate;
+        }
+
+        @keyframes shineHope { to { background-position: 200% center; } }
+        @keyframes breath {
+            from { opacity: 0.6; text-shadow: 0 0 5px var(--dangan-blue); }
+            to { opacity: 1; text-shadow: 0 0 15px var(--dangan-blue); }
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            height: 180px;
+            border: 2px solid #555;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            transition: 0.3s;
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.6s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.7s; }
+
+        .gallery-item:hover {
+            border-color: var(--dangan-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+            opacity: 0.8;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: var(--dangan-pink); border-radius: 5px; }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+		
+        #particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; 
+        }
+        .particle {
+            position: absolute;
+            animation: floatUpSlow 8s linear infinite;
+            opacity: 0.5;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        @keyframes floatUpSlow {
+            0% { transform: translateY(100vh) scale(0.8); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles"></div> 
+    <div class="overlay"></div>
+
+    <div class="main-layout">
+        <div class="gallery-left">
+            <a href="index.html#naegi" class="back-btn">← 返回首页</a>
+            
+            <img src="../images/img001.jpg" alt="苗木诚" class="character-img">
+            
+            <div class="deco-text">HOPE</div>
+        </div>
+
+        <div class="gallery-right">
+            <div class="gallery-header">
+                <h1>GALLERY</h1>
+                <span>NAEGI MAKOTO</span>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="../images/img020.jpg" alt="插图"></div>
+                <div class="gallery-item"><img src="../images/img021.jpg" alt="插图"></div>
+                <div class="gallery-item"><img src="../images/img022.jpg" alt="插图"></div>
+                <div class="gallery-item"><img src="../images/img023.jpg" alt="插图"></div>
+            </div>
+
+            <div style="margin-top: 40px; border-top: 1px dashed #555; padding-top: 20px; color: #888; font-size: 0.9rem;">
+                <p>> 正在连接未来机关数据库...</p>
+                <p>> 权限验证通过。欢迎，超高校级的希望。</p>
+            </div>
+        </div>
+    </div>
+	
+	<script>
+	        const particlesContainer = document.getElementById('particles');
+	        const symbols = ['🍀', '🌱', '✨', '🕊️']; 
+	
+	        function createParticle() {
+	            const span = document.createElement('span');
+	            span.classList.add('particle');
+	            span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+	            span.style.left = Math.random() * 100 + 'vw';
+	            span.style.fontSize = (Math.random() * 20 + 20) + 'px'; 
+	            span.style.animationDuration = (Math.random() * 4 + 6) + 's'; 
+	            particlesContainer.appendChild(span);
+	            setTimeout(() => { span.remove(); }, 12000);
+	        }
+	        setInterval(createParticle, 800); 
+	    </script>
+</body>
+</html>

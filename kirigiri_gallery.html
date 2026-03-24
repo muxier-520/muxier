@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雾切响子 - 绝密调查档案</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            color: #fff;
+            /* 🟢 修改点：背景路径 */
+            background: url('../images/bg07.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        :root {
+            --theme-color: #9b59b6; 
+            --accent-color: #fff;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gallery-left {
+            width: 40%;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            border-right: 1px solid rgba(155, 89, 182, 0.3);
+        }
+
+        .character-img {
+            height: 90%;
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(155, 89, 182, 0.4));
+            transform: translateX(-50px); 
+            opacity: 0;
+            animation: slideInLeft 0.8s forwards 0.3s;
+        }
+
+        .character-img:hover { transform: scale(1.03); }
+
+        .deco-text {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.05);
+            z-index: -1;
+            font-style: italic;
+            pointer-events: none;
+            letter-spacing: 5px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px; left: 30px;
+            padding: 10px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--theme-color);
+            color: var(--theme-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 70%);
+        }
+
+        .back-btn:hover {
+            background: var(--theme-color);
+            color: #fff;
+            box-shadow: 0 0 20px var(--theme-color);
+        }
+
+        .gallery-right {
+            width: 60%;
+            padding: 50px;
+            overflow-y: auto;
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(15px);
+            border-left: 3px solid var(--theme-color);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid rgba(155, 89, 182, 0.5);
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+        .gallery-header h1 {
+            font-size: 3rem;
+            color: #fff;
+            font-family: "Georgia", "Times New Roman", serif;
+            font-style: italic;
+            letter-spacing: 5px;
+            animation: mysteryFocus 6s infinite;
+        }
+
+        .gallery-header span {
+            font-family: monospace;
+            color: #ccc;
+            border-right: 2px solid var(--theme-color);
+            padding-right: 5px;
+            animation: blinkCursor 1s infinite;
+        }
+
+        @keyframes mysteryFocus {
+            0% { filter: blur(0px); opacity: 1; text-shadow: 0 0 10px var(--theme-color); }
+            45% { filter: blur(0px); opacity: 1; text-shadow: 0 0 10px var(--theme-color); }
+            50% { filter: blur(4px); opacity: 0.5; text-shadow: none; letter-spacing: 15px; }
+            55% { filter: blur(0px); opacity: 1; text-shadow: 0 0 10px var(--theme-color); letter-spacing: 5px; }
+            100% { filter: blur(0px); opacity: 1; text-shadow: 0 0 10px var(--theme-color); }
+        }
+        @keyframes blinkCursor {
+            50% { border-color: transparent; }
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            height: 180px;
+            border: 2px solid #444;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            transition: 0.3s;
+            opacity: 0;
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.6s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.7s; }
+
+        .gallery-item:hover {
+            border-color: var(--theme-color);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(155, 89, 182, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+            opacity: 0.7;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 4px; }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+        .particle {
+            position: absolute;
+            animation: floatMysterious 8s ease-in-out infinite;
+            opacity: 0;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 10px #9b59b6;
+        }
+        @keyframes floatMysterious {
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+            40% { opacity: 0.8; transform: translateY(60vh) scale(1.5) rotate(10deg); }
+            60% { opacity: 0.8; transform: translateY(40vh) scale(1.5) rotate(-10deg); }
+            100% { transform: translateY(-10vh) scale(0.5) rotate(0deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+	<div id="particles"></div>
+    <div class="overlay"></div>
+
+    <div class="main-layout">
+        <div class="gallery-left">
+            <a href="index.html#kirigiri" class="back-btn">◀ RETURN</a>
+            
+            <img src="../images/img002.jpg" alt="雾切响子" class="character-img">
+            <div class="deco-text">MYSTERY</div>
+        </div>
+
+        <div class="gallery-right">
+            <div class="gallery-header">
+                <h1>DETECTIVE</h1>
+                <span>KIRIGIRI KYOKO</span>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="../images/img024.jpg" alt="线索1"></div>
+                <div class="gallery-item"><img src="../images/img025.jpg" alt="线索2"></div>
+                <div class="gallery-item"><img src="../images/img026.jpg" alt="线索3"></div>
+                <div class="gallery-item"><img src="../images/img027.jpg" alt="线索4"></div>
+            </div>
+
+            <div style="margin-top: 40px; border-top: 1px solid #444; padding-top: 20px; color: #aaa; font-size: 0.9rem; font-family: monospace;">
+                <p>> 档案编号：#9102-K</p>
+                <p>> 状态：绝密 (TOP SECRET)</p>
+                <p>> 备注：即使是谎言，也有被揭露的价值。</p>
+            </div>
+        </div>
+    </div>
+	<script>
+	        const particlesContainer = document.getElementById('particles');
+	        const symbols = ['🔍', '🗝️', '🧩', '👣', '？']; 
+	
+	        function createParticle() {
+	            const span = document.createElement('span');
+	            span.classList.add('particle');
+	            span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+	            span.style.left = Math.random() * 100 + 'vw';
+	            span.style.fontSize = (Math.random() * 30 + 40) + 'px';
+	            span.style.animationDuration = (Math.random() * 3 + 6) + 's';
+	            particlesContainer.appendChild(span);
+	            setTimeout(() => { span.remove(); }, 10000);
+	        }
+	        setInterval(createParticle, 300);
+	    </script>
+</body>
+</html>

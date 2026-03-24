@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>七海千秋 - 游戏存档数据</title>
+    <style>
+        /* ================= 全局设定 ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            color: #fff;
+            /* 🟢 修改点：背景路径 */
+            background: url('../images/bg08.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        :root {
+            /* 七海专属配色：电玩粉 */
+            --theme-color: #ff99cc; 
+            --accent-color: #fff;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(40, 20, 40, 0.4); /* 稍微带点紫色的遮罩 */
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ================= 左侧：人物展示区 ================= */
+        .gallery-left {
+            width: 40%;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            border-right: 2px dashed rgba(255, 153, 204, 0.5); /* 虚线边框，更有像素感 */
+        }
+
+        .character-img {
+            height: 90%;
+            width: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 153, 204, 0.6)); /* 粉色光晕 */
+            transform: translateX(-50px); 
+            opacity: 0;
+            animation: slideInLeft 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards 0.3s; /* 弹性动画 */
+        }
+
+        .character-img:hover { transform: scale(1.03) rotate(2deg); /* 悬停时稍微歪头 */ }
+
+        .deco-text {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+            font-family: "Arial Black", sans-serif; /* 粗体字 */
+            pointer-events: none;
+            letter-spacing: 5px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px; left: 30px;
+            padding: 10px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--theme-color);
+            color: var(--theme-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.2s;
+            /* 游戏手柄风格：圆角 */
+            border-radius: 30px;
+        }
+
+        .back-btn:hover {
+            background: var(--theme-color);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 153, 204, 0.5);
+        }
+
+        /* ================= 右侧：画廊滚动区 ================= */
+        .gallery-right {
+            width: 60%;
+            padding: 50px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 4px solid var(--theme-color); /* 粗线条 */
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+       /* 七海千秋标题特效 */
+       .gallery-header h1 {
+           font-size: 3rem;
+           color: #fff;
+           font-style: italic;
+           /* 强制使用等宽字体模拟像素感 */
+           font-family: "Consolas", "Courier New", monospace;
+           /* 硬阴影，模拟像素块立体感 */
+           text-shadow: 4px 4px 0px var(--theme-color), 8px 8px 0px rgba(0,0,0,0.5);
+           /* 上下跳动动画 */
+           animation: pixelBounce 0.6s infinite alternate steps(2); /* steps(2) 让动作有顿挫感 */
+       }
+
+       .gallery-header span {
+           background: #fff;
+           color: var(--theme-color);
+           padding: 5px 10px;
+           border: 2px solid #fff;
+           /* 小标题左右摇摆 */
+           display: inline-block;
+           animation: tilt 1s infinite linear;
+           border-radius: 4px;
+           font-weight: bold;
+           font-size: 1.2rem;
+       }
+
+       @keyframes pixelBounce {
+           from { transform: translateY(0); }
+           to { transform: translateY(-10px); }
+       }
+       @keyframes tilt {
+           0% { transform: rotate(0deg); }
+           25% { transform: rotate(5deg); }
+           75% { transform: rotate(-5deg); }
+           100% { transform: rotate(0deg); }
+       }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            height: 180px;
+            border: 2px solid #fff;
+            border-radius: 15px; /* 圆润的边框 */
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            transition: 0.3s;
+            opacity: 0;
+            animation: popUp 0.5s forwards; /* 弹出动画 */
+        }
+
+        /* 依次弹出 */
+        .gallery-item:nth-child(1) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.6s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.7s; }
+
+        .gallery-item:hover {
+            border-color: var(--theme-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--theme-color);
+            z-index: 10;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #222; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 5px; }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes popUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+		
+		/* --- 七海千秋：游戏粒子 (优化版) --- */
+        #particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+        }
+        .particle {
+            position: absolute;
+            /* 关键修改：由 steps(8) 改为 linear，彻底消除卡顿感 */
+            animation: floatPixel 6s linear infinite; 
+            opacity: 0.6; /* 稍微透明一点，不那么刺眼 */
+            /* 稍微减弱描边光晕 */
+            text-shadow: 1px 1px 0px #ff00cc, -1px -1px 0px #00ffff; 
+        }
+        @keyframes floatPixel {
+            0% { transform: translateY(105vh) translateX(0); }
+            25% { transform: translateY(80vh) translateX(20px); } 
+            50% { transform: translateY(50vh) translateX(-20px); }
+            75% { transform: translateY(20vh) translateX(20px); }
+            100% { transform: translateY(-10vh) translateX(0); }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="particles"></div> 
+    <div class="overlay"></div>
+
+    <div class="main-layout">
+        <div class="gallery-left">
+            <a href="index.html#chiaki" class="back-btn">← 返回首页</a>
+            
+            <img src="../images/img010.jpg" alt="七海千秋" class="character-img">
+            <div class="deco-text">8-BIT</div>
+        </div>
+
+        <div class="gallery-right">
+            <div class="gallery-header">
+                <h1>GAMER</h1>
+                <span>NANAMI CHIAKI</span>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="../images/img028.jpg" alt="CG1"></div>
+                <div class="gallery-item"><img src="../images/img029.jpg" alt="CG2"></div>
+                <div class="gallery-item"><img src="../images/img030.jpg" alt="CG3"></div>
+                <div class="gallery-item"><img src="../images/img031.jpg" alt="CG4"></div>
+            </div>
+
+            <div style="margin-top: 40px; border-top: 2px dashed #666; padding-top: 20px; color: #ccc; font-family: monospace;">
+                <p>♥ HP: 100/100</p>
+                <p>★ LEVEL: 99</p>
+                <p>_ LOADING DATA... [||||||||||||] 100%</p>
+            </div>
+        </div>
+    </div>
+	
+	<script>
+        const particlesContainer = document.getElementById('particles');
+        const symbols = ['👾', '🎮', '🕹️', '⭐', '❤️']; 
+
+        function createParticle() {
+            const span = document.createElement('span');
+            span.classList.add('particle');
+            span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            span.style.left = Math.random() * 100 + 'vw';
+            // 尺寸调小：20px 到 35px
+            span.style.fontSize = (Math.random() * 15 + 20) + 'px';
+            // 速度放慢
+            span.style.animationDuration = (Math.random() * 2 + 5) + 's'; 
+            particlesContainer.appendChild(span);
+            setTimeout(() => { span.remove(); }, 8000);
+        }
+        // 频率大幅降低：每 600毫秒 生成一个
+        setInterval(createParticle, 600); 
+    </script>
+</body>
+</html>

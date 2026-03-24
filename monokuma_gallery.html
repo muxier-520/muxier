@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑白熊 - 绝望处刑名单</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            color: #fff;
+            /* 🟢 修改点：背景路径 */
+            background: url('../images/bg09.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        :root {
+            --theme-red: #ff0000; 
+            --theme-black: #000;
+        }
+
+        .overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0, 0, 0, 0.7); 
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gallery-left {
+            width: 40%;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(to right, #000, transparent);
+            border-right: 5px solid var(--theme-red);
+        }
+
+        .character-img {
+            height: 85%;
+            width: auto;
+            filter: drop-shadow(0 0 20px var(--theme-red));
+            transform: translateY(50px); 
+            opacity: 0;
+            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s;
+        }
+
+        .character-img:hover { transform: scale(1.1) rotate(-5deg); }
+
+        .deco-text {
+            position: absolute;
+            top: 20px; right: 20px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 0, 0, 0.2);
+            z-index: -1;
+            font-family: "Impact", sans-serif;
+            pointer-events: none;
+            letter-spacing: 2px;
+            writing-mode: vertical-rl;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px; left: 30px;
+            padding: 10px 30px;
+            background: #000;
+            border: 2px solid var(--theme-red);
+            color: var(--theme-red);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.2s;
+            clip-path: polygon(0% 0%, 100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%);
+        }
+
+        .back-btn:hover {
+            background: var(--theme-red);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .gallery-right {
+            width: 60%;
+            padding: 50px;
+            overflow-y: auto;
+            background: rgba(20, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 4px solid var(--theme-red);
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+
+       .gallery-header h1 {
+           font-size: 3.5rem;
+           font-weight: 900;
+           font-family: "Impact", sans-serif;
+           color: #fff;
+           animation: terrorShake 0.15s infinite;
+           position: relative;
+       }
+       
+       .gallery-header h1::after {
+           content: "HEADMASTER";
+           position: absolute;
+           left: 2px; top: 2px;
+           color: #ff0000;
+           z-index: -1;
+           opacity: 0.7;
+       }
+       
+       .gallery-header span {
+           background: #000;
+           color: #ff0000;
+           border: 2px dashed #ff0000;
+           font-weight: bold;
+           padding: 5px 20px;
+           animation: alertFlash 0.5s infinite alternate;
+       }
+       
+       @keyframes terrorShake {
+           0% { transform: translate(1px, 1px) rotate(0deg); }
+           10% { transform: translate(-1px, -2px) rotate(-1deg); }
+           20% { transform: translate(-3px, 0px) rotate(1deg); }
+           30% { transform: translate(3px, 2px) rotate(0deg); }
+           40% { transform: translate(1px, -1px) rotate(1deg); }
+           50% { transform: translate(-1px, 2px) rotate(-1deg); }
+           60% { transform: translate(-3px, 1px) rotate(0deg); }
+           70% { transform: translate(3px, 1px) rotate(-1deg); }
+           80% { transform: translate(-1px, -1px) rotate(1deg); }
+           90% { transform: translate(1px, 2px) rotate(0deg); }
+           100% { transform: translate(1px, -2px) rotate(-1deg); }
+       }
+       @keyframes alertFlash {
+           from { background: #000; color: #ff0000; }
+           to { background: #ff0000; color: #000; }
+       }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            height: 180px;
+            border: 3px solid #fff;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            transition: 0.3s;
+            opacity: 0;
+            transform: scale(0);
+            animation: explodeIn 0.5s forwards;
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.6s; }
+
+        .gallery-item:hover {
+            border-color: var(--theme-red);
+            transform: rotate(2deg) scale(1.05);
+            box-shadow: 0 0 15px var(--theme-red);
+            z-index: 10;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+            filter: grayscale(100%);
+        }
+
+        .gallery-item:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-red); border: 2px solid #fff; }
+
+        @keyframes popUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes explodeIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        #particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 100;
+        }
+        .particle {
+            position: absolute;
+            animation: floatChaos 5s linear infinite;
+            font-weight: bold;
+            opacity: 0.6;
+            filter: drop-shadow(0 0 5px #ff0000);
+        }
+        @keyframes floatChaos {
+            0% { transform: translateY(110vh) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-20vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles"></div> 
+    <div class="overlay"></div>
+
+    <div class="main-layout">
+        <div class="gallery-left">
+            <a href="index.html#monokuma" class="back-btn">◀ RETURN</a>
+            
+            <img src="../images/img003.jpg" alt="黑白熊" class="character-img">
+            <div class="deco-text">DESPAIR</div>
+        </div>
+
+        <div class="gallery-right">
+            <div class="gallery-header">
+                <h1>HEADMASTER</h1>
+                <span>MONOKUMA</span>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="../images/img032.jpg" alt="绝望1"></div>
+                <div class="gallery-item"><img src="../images/img033.jpg" alt="绝望2"></div>
+                <div class="gallery-item"><img src="../images/img034.jpg" alt="绝望3"></div>
+                <div class="gallery-item"><img src="../images/img035.jpg" alt="绝望4"></div>
+            </div>
+
+            <div style="margin-top: 50px; text-align: center; color: #fff;">
+                <h2 style="color: var(--theme-red); font-size: 2rem;">PUPUPU...</h2>
+                <p>想要离开这里吗？那就开始自相残杀吧！</p>
+                <p style="font-size: 3rem; margin-top: 20px;">☠</p>
+            </div>
+        </div>
+    </div>
+	
+	<script>
+	        const particlesContainer = document.getElementById('particles');
+	        const symbols = ['💣', '🔨', '🔪', '🧸', '☠']; 
+	
+	        function createParticle() {
+	            const span = document.createElement('span');
+	            span.classList.add('particle');
+	            span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+	            span.style.left = Math.random() * 100 + 'vw';
+	            span.style.fontSize = (Math.random() * 20 + 30) + 'px'; 
+	            span.style.animationDuration = (Math.random() * 3 + 4) + 's'; 
+	            particlesContainer.appendChild(span);
+	            setTimeout(() => { span.remove(); }, 8000);
+	        }
+	        setInterval(createParticle, 400);
+	    </script>
+</body>
+</html>

@@ -1,0 +1,542 @@
+/* style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background-color: #1a1a1a; /* 整体深色背景 */
+    color: #fff;
+    line-height: 1.6;
+}
+
+/* 定义弹丸论破风格颜色 */
+:root {
+    --dangan-pink: #ff00cc; /* 霓虹粉 */
+    --dangan-blue: #00ffff; /* 科技蓝 */
+}
+
+/* 导航栏 */
+nav {
+    background: #000;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--dangan-pink);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--dangan-pink);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: var(--dangan-pink);
+}
+
+/* --- 首页封面区 (BG01 半透明处理) --- */
+.hero-section {
+    position: relative;
+    height: 60vh; /* 占据屏幕上半部分 */
+    background-color: #000;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* 背景图层：绝对定位在底部 */
+/* =========================================
+   3D 立体旋转壁纸特效 (bg01, bg04, bg05)
+   ========================================= */
+
+/* 1. 舞台：设置 3D 透视感 */
+.scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    perspective: 1000px; /* 眼睛距离屏幕的距离，越小立体感越强 */
+    overflow: hidden;
+    z-index: 1; /* 在内容层下面 */
+    cursor: pointer; /* 鼠标变手型，提示可点击 */
+}
+
+/* 2. 旋转容器：负责具体的转动 */
+.carousel {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d; /* 关键：保留子元素的3D空间 */
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* 弹性动画，像弹丸论破那种“Duang”的感觉 */
+}
+
+/* 3. 每一个面的公共样式 */
+.carousel-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    /* 稍微调暗一点，让上面的白色文字看得清 */
+    filter: brightness(0.6); 
+    border-bottom: 3px solid var(--dangan-pink);
+}
+
+.carousel-face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 4. 构建三角形柱体 (核心数学部分) */
+/* 这里的 28.8vw 是计算出来的：100vw / (2 * tan(60deg)) ≈ 28.8vw */
+/* 意思是把图片向外推，形成一个中心空的柱子 */
+
+/* 第一张图：0度，向前推 */
+/* =========================================
+   3D 立体旋转壁纸特效 (4张图修正版)
+   ========================================= */
+
+/* 1. 每一面的公共样式 */
+.carousel-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    border-bottom: 3px solid var(--dangan-pink);
+    /* 稍微调暗一点 */
+    filter: brightness(0.6); 
+    /* 解决背面可能闪烁的问题 */
+    backface-visibility: hidden; 
+}
+
+/* 2. 构建正方形柱体 (关键数学部分) */
+/* 核心公式：translateZ = 宽度 / 2 = 50vw */
+
+/* 第一张图：0度 */
+.face-1 {
+    transform: rotateY(0deg) translateZ(50vw);
+}
+
+/* 第二张图：90度 */
+.face-2 {
+    transform: rotateY(90deg) translateZ(50vw);
+}
+
+/* 第三张图：180度 */
+.face-3 {
+    transform: rotateY(180deg) translateZ(50vw);
+}
+
+/* 第四张图：270度 (你新增的) */
+.face-4 {
+    transform: rotateY(270deg) translateZ(50vw);
+}
+
+/* 3. 修正容器初始位置 */
+/* 必须往里缩 50vw，否则图片会怼到脸上 */
+.carousel {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    
+    /* ⚠️ 这里也要改！从 -28.8vw 改成 -50vw */
+    transform: translateZ(-50vw); 
+}
+
+/* 内容层：浮在背景之上 */
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    text-shadow: 4px 4px 0px var(--dangan-pink);
+}
+
+.mascot-anim img {
+    width: 100px;
+    margin-top: 10px;
+}
+
+/* 通用布局 */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+h2 {
+    text-align: center;
+    border-bottom: 2px solid #fff;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+/* 剧情板块 */
+.story-section {
+    background: #222;
+}
+.story-box {
+    background: rgba(0,0,0,0.5);
+    padding: 20px;
+    border-left: 5px solid var(--dangan-pink);
+}
+
+/* 角色与立绘模块 */
+.standing-section {
+    background: linear-gradient(135deg, #000, #1a2a6c);
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 2px solid var(--dangan-blue);
+    border-radius: 10px;
+    scroll-margin-top: 100px;
+}
+
+.standing-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 改为顶部对齐，防止文字多了图片位置跑偏 */
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.art-display img {
+    height: 450px; /* 稍微调高一点，展示更多立绘细节 */
+    width: auto;
+    background: #fff;
+    border: 4px solid #000;
+    display: block; /* 防止图片底部有缝隙 */
+	
+	transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.art-controls {
+    flex: 1; /* 让文字部分占据剩余空间 */
+    max-width: 500px; /* 限制最大宽度 */
+}
+
+.art-controls h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.tag {
+    background: var(--dangan-blue);
+    color: #000;
+    padding: 2px 8px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.btn-group button {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    cursor: pointer;
+}
+.btn-group button:hover {
+    background: var(--dangan-pink);
+}
+
+/* 角色卡片网格 */
+.char-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.char-card {
+    width: 250px;
+    background: #fff;
+    color: #000;
+    border: 3px solid #000;
+    text-align: center;
+}
+.char-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    object-position: top;
+}
+.char-info { padding: 15px; }
+
+.btn-custom {
+    display: inline-block;
+    margin-top: 10px;
+    background: #000;
+    color: #fff;
+    padding: 5px 15px;
+    text-decoration: none;
+}
+
+/* 影音资料 */
+.media-grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+video, audio {
+    max-width: 100%;
+    border: 2px solid var(--dangan-pink);
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #000;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* --- 新增：详细资料卡样式 (电子档案风格) --- */
+.bio-data {
+    background: rgba(0, 0, 0, 0.4); /* 半透明黑底 */
+    border: 1px solid #444;
+    padding: 15px;
+    margin: 15px 0; /* 上下留空 */
+    border-left: 4px solid var(--dangan-pink); /* 左边加一条粉色竖线 */
+    font-size: 0.95rem;
+}
+
+/* 每一行数据 */
+.bio-row {
+    margin-bottom: 8px;
+    display: flex; /* 让标签和内容横向排列 */
+    align-items: flex-start; /* 顶部对齐 */
+}
+
+/* 标签 (如：性别) */
+.bio-label {
+    color: var(--dangan-blue); /* 科技蓝 */
+    font-weight: bold;
+    min-width: 60px; /* 保证标签宽度一致，整齐 */
+    flex-shrink: 0; /* 防止标签被挤压 */
+}
+
+/* 内容 (如：男) */
+.bio-value {
+    color: #fff;
+}
+
+/* 长段落描述 */
+.bio-desc {
+    color: #ddd;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* 鼠标悬停在资料卡时的特效 */
+.bio-data:hover {
+    background: rgba(255, 0, 204, 0.1); /* 微微发粉光 */
+    border-color: var(--dangan-pink);
+    box-shadow: 0 0 10px rgba(255, 0, 204, 0.2);
+    transition: all 0.3s;
+}
+
+/* =========================================
+   高级特效升级包 (添加到 style.css 末尾)
+   ========================================= */
+
+/* 1. 全局丝滑滚动设置 */
+html {
+    scroll-behavior: smooth; /* 点击导航跳转时平滑滚动 */
+}
+
+/* 2. 自定义滚动条 (Webkit内核浏览器有效) - 变成弹丸风格的粉色 */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #1a1a1a; 
+}
+::-webkit-scrollbar-thumb {
+    background: var(--dangan-pink); 
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dangan-blue); 
+}
+
+/* 3. 导航栏升级：磨砂玻璃效果 (Glassmorphism) */
+nav {
+    /* 把原来的纯黑背景改成半透明黑 */
+    background: rgba(0, 0, 0, 0.7) !important; 
+    /* 核心代码：背景模糊 */
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(255, 0, 204, 0.5); /* 边框也稍微透明一点 */
+    transition: all 0.3s ease;
+}
+
+/* 4. 滚动入场动画的基础状态 */
+/* 我们会用JS给元素加上 .reveal 类，默认是隐藏并下沉的 */
+.reveal {
+    opacity: 0;
+    transform: translateY(50px); /* 初始位置在下方50px */
+    transition: all 0.8s ease-out; /* 0.8秒的丝滑过渡 */
+}
+
+/* 当元素进入屏幕，JS会加上 .active 类，变成可见并归位 */
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.gameplay-section {
+    background-color: #0d0d0d;
+    border-bottom: 2px solid #333;
+    padding: 20px 0;
+}
+
+/* 2. 左右布局容器 */
+.gameplay-content {
+    display: flex; /* 让文字和图片并排 */
+    align-items: center; /* 垂直居中 */
+    justify-content: space-between;
+    gap: 40px; /* 中间留出空隙 */
+    flex-wrap: wrap; /* 手机上自动换行 */
+}
+
+/* 3. 左侧：文字框样式 */
+.game-text-box {
+    flex: 1; /* 占据剩余空间 */
+    background: linear-gradient(90deg, rgba(0,255,255,0.1), transparent); /* 淡淡的蓝色渐变背景 */
+    padding: 25px;
+    border-left: 5px solid var(--dangan-blue); /* 左边蓝色竖条 */
+    border-radius: 0 10px 10px 0;
+    min-width: 300px;
+}
+
+.game-text-box h3 {
+    font-size: 1.5rem;
+    color: var(--dangan-blue);
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #555;
+    padding-bottom: 10px;
+}
+
+.game-text-box .highlight {
+    color: #fff;
+    background-color: var(--dangan-pink);
+    padding: 2px 5px;
+    font-size: 0.8em;
+    border-radius: 3px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.game-text-box p {
+    color: #ccc;
+    margin-bottom: 15px;
+    text-align: justify; /* 两端对齐，看起来整齐 */
+}
+
+/* 4. 右侧：图片框样式 */
+.game-img-box {
+    flex: 1;
+    min-width: 300px;
+    position: relative; /* 为了放下面的文字标签 */
+    border: 3px solid var(--dangan-pink); /* 粉色边框 */
+    box-shadow: 0 0 15px rgba(255, 0, 204, 0.3); /* 粉色发光 */
+    transition: transform 0.3s ease; /* 动效准备 */
+    overflow: hidden; /* 防止图片放大溢出 */
+}
+
+/* 鼠标悬停时，图片稍微浮起 */
+.game-img-box:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(255, 0, 204, 0.6);
+}
+
+.game-img-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 图片上的小标签 */
+.img-caption {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--dangan-pink);
+    color: #000;
+    font-weight: bold;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+/* --- 新增：首页立绘点击提示 --- */
+.art-display a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: zoom-in; /* 鼠标变成放大镜图标 */
+}
+
+.click-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7);
+    color: var(--dangan-pink);
+    padding: 10px 20px;
+    border: 2px solid var(--dangan-pink);
+    font-weight: bold;
+    opacity: 0; /* 默认隐藏 */
+    transition: 0.3s;
+    pointer-events: none; /* 让鼠标穿透文字，不影响点击 */
+}
+
+/* 鼠标悬停在立绘框上时，显示提示 */
+.art-display:hover .click-hint {
+    opacity: 1;
+}
+
+/* 给所有立绘图片加上白色发光描边 */
+.art-display img, 
+.character-img {
+    /* 这一行代码会在人物周围产生一层白色的光晕 */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    /* 如果想要那种硬边轮廓，可以用这个： */
+    /* filter: drop-shadow(2px 2px 0px #fff) drop-shadow(-2px -2px 0px #fff); */
+}
+
